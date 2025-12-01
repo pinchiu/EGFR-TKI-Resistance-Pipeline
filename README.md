@@ -1,9 +1,12 @@
 # EGFR 突變分析專案完整詳解
 
-這個系統的目標是從 TCGA 資料庫下載肺腺癌 (LUAD) 的基因數據，並分析 EGFR 基因的致病突變與抗藥性突變是否同時存在 (Co-occurrence)。
+這個專案的目標是從 TCGA (The Cancer Genome Atlas) 資料庫下載肺腺癌 (LUAD) 的基因突變數據，並針對 EGFR 基因進行分析，特別是探討致敏性突變 (Sensitizing Mutations) 與抗藥性突變 (Resistance Mutations) 的共現 (Co-occurrence) 情況。
 
+---
 
-## 1. 環境需求 (Requirements)
+## 1. 快速開始
+
+### 環境需求 (Requirements)
 
 本專案需要 Python 3.x 環境，並安裝以下套件：
 *   `pandas`: 數據處理
@@ -12,15 +15,70 @@
 *   `seaborn`: 進階繪圖
 *   `pyyaml`: 讀取設定檔
 
-您可以透過以下指令一次安裝所有套件：
+您可以透過 `requirements.txt` 檔案一次安裝所有必要的套件：
 
 ```bash
 pip install -r requirements.txt
 ```
 
 ---
+## 2. 如何執行
 
-## 2. 程式碼運作詳解 (Code Explanation)
+在終端機中執行以下指令即可跑完所有流程：
+
+```bash
+python run_pipeline.py
+```
+
+## 3. 系統架構與流程 (Workflow)
+
+整個流水線分為五個階段，由 `run_pipeline.py` 負責統一指揮：
+
+### 第一階段：資料獲取 (Data Acquisition)
+*   **執行腳本**: `download_tcga_data.py`
+*   **動作**:
+    1.  讀取 `config.yaml` 設定檔。
+    2.  **檢查機制**: 程式會先檢查 `data/TCGA_LUAD_Somatic_Mutations_Raw.maf` 是否已存在。
+        *   **若存在**: 直接跳過下載，節省時間。
+        *   **若不存在**: 才會向 GDC API 發送請求，下載並合併 50 個病人的數據。
+    3.  **自動清理**: 下載完成後會刪除暫存檔。
+*   **產出檔案**: `data/TCGA_LUAD_Somatic_Mutations_Raw.maf`
+
+### 第二階段：資料清洗 (Data Cleaning)
+*   **執行腳本**: `clean_data.py`
+*   **動作**:
+    1.  讀取原始 MAF 檔。
+    2.  **篩選**: 只保留 `Hugo_Symbol` 為 "EGFR" 的資料列。
+    3.  **分類 (Feature Identification)**: 根據蛋白質變化 (HGVSp_Short) 欄位，將突變貼上標籤：
+        *   **致病突變 (Sensitizing)**: 如 L858R, Exon 19 Del。
+        *   **抗藥突變 (Resistance)**: 如 T790M, C797S。
+        *   **其他**: 無法歸類的突變。
+*   **產出檔案**: `EGFR_Mutations_Cleaned_Processed.csv`
+
+### 第三階段：共現性分析 (Co-occurrence Analysis)
+*   **執行腳本**: `analyze_cooccurrence.py`
+*   **動作**:
+    1.  讀取清洗後的 CSV 檔。
+    2.  **精確統計**: 使用 `Counter` 計算各種突變的發生頻率與百分比。
+    3.  **尋找抗藥機制**: 專門篩選同時帶有 **L858R** 和 **T790M** 的病人，這是臨床上驗證獲得性抗藥性的關鍵指標。
+    4.  **輸出報表**: 產生包含詳細統計數字的 CSV 報表。
+*   **產出檔案**: 
+    *   `results/cooccurrence_stats.csv` (詳細統計)
+    *   `results/patient_analysis.csv` (用於繪圖的格式)
+
+### 第四階段：視覺化 (Visualization)
+*   **執行腳本**: `visualize_results.py`
+*   **動作**:
+    1.  使用 `matplotlib` 和 `seaborn` 繪圖庫。
+    2.  **長條圖 1**: 各種 EGFR 突變出現的頻率 (Mutation Frequency)。
+    3.  **長條圖 2**: 病人分類統計 (Patient Status)，顯示有多少人同時帶有抗藥性。
+*   **產出檔案**: 
+    *   `results/mutation_frequency.png`
+    *   `results/patient_status.png`
+
+---
+
+## 4. 程式碼運作詳解 (Code Explanation)
 
 這份文件將逐一解釋每個程式檔案中的程式碼區塊在做什麼。
 
@@ -210,55 +268,7 @@ def main():
 
 ---
 
-## 3. 系統架構與流程 (Workflow)
-
-整個流水線分為五個階段，由 `run_pipeline.py` 負責統一指揮：
-
-### 第一階段：資料獲取 (Data Acquisition)
-*   **執行腳本**: `download_tcga_data.py`
-*   **動作**:
-    1.  讀取 `config.yaml` 設定檔。
-    2.  **檢查機制**: 程式會先檢查 `data/TCGA_LUAD_Somatic_Mutations_Raw.maf` 是否已存在。
-        *   **若存在**: 直接跳過下載，節省時間。
-        *   **若不存在**: 才會向 GDC API 發送請求，下載並合併 50 個病人的數據。
-    3.  **自動清理**: 下載完成後會刪除暫存檔。
-*   **產出檔案**: `data/TCGA_LUAD_Somatic_Mutations_Raw.maf`
-
-### 第二階段：資料清洗 (Data Cleaning)
-*   **執行腳本**: `clean_data.py`
-*   **動作**:
-    1.  讀取原始 MAF 檔。
-    2.  **篩選**: 只保留 `Hugo_Symbol` 為 "EGFR" 的資料列。
-    3.  **分類 (Feature Identification)**: 根據蛋白質變化 (HGVSp_Short) 欄位，將突變貼上標籤：
-        *   **致病突變 (Sensitizing)**: 如 L858R, Exon 19 Del。
-        *   **抗藥突變 (Resistance)**: 如 T790M, C797S。
-        *   **其他**: 無法歸類的突變。
-*   **產出檔案**: `EGFR_Mutations_Cleaned_Processed.csv`
-
-### 第三階段：共現性分析 (Co-occurrence Analysis)
-*   **執行腳本**: `analyze_cooccurrence.py`
-*   **動作**:
-    1.  讀取清洗後的 CSV 檔。
-    2.  **精確統計**: 使用 `Counter` 計算各種突變的發生頻率與百分比。
-    3.  **尋找抗藥機制**: 專門篩選同時帶有 **L858R** 和 **T790M** 的病人，這是臨床上驗證獲得性抗藥性的關鍵指標。
-    4.  **輸出報表**: 產生包含詳細統計數字的 CSV 報表。
-*   **產出檔案**: 
-    *   `results/cooccurrence_stats.csv` (詳細統計)
-    *   `results/patient_analysis.csv` (用於繪圖的格式)
-
-### 第四階段：視覺化 (Visualization)
-*   **執行腳本**: `visualize_results.py`
-*   **動作**:
-    1.  使用 `matplotlib` 和 `seaborn` 繪圖庫。
-    2.  **長條圖 1**: 各種 EGFR 突變出現的頻率 (Mutation Frequency)。
-    3.  **長條圖 2**: 病人分類統計 (Patient Status)，顯示有多少人同時帶有抗藥性。
-*   **產出檔案**: 
-    *   `results/mutation_frequency.png`
-    *   `results/patient_status.png`
-
----
-
-## 4. 生物特殊名詞 (Biological Terms)
+## 5. 生物特殊名詞 (Biological Terms)
 
 在代碼中，我們使用了以下生物學和生物資訊學的專有名詞：
 
@@ -278,21 +288,15 @@ def main():
 *   **HGVSp_Short**: 蛋白質層次的變異表示法 (例如 p.L858R)。
 *   **Hugo_Symbol**: 基因的標準符號 (例如 EGFR)。
 
-## 5. 如何執行
 
-在終端機中執行以下指令即可跑完所有流程：
 
-```bash
-python run_pipeline.py
-```
-
-## 5. 檔案結構說明
+## 6. 檔案結構說明
 
 *   **`config.yaml`**: **控制中心**。所有的設定都在這裡，例如檔案路徑、基因名稱、突變列表。如果你想改分析別的基因 (例如 KRAS)，只要改這裡就好。
 *   **`requirements.txt`**: **安裝清單**。列出了執行此程式需要的 Python 套件 (如 pandas, requests)。
 *   **`EGFR_Resistance_Mutations_Ground_Truth.csv`**: **標準答案**。我們預先定義好的抗藥性突變列表，作為參考基準。
 
-## 6. 資料流向圖 (Data Flow)
+## 7. 資料流向圖 (Data Flow)
 
 1.  **雲端 (GDC API)**
     ⬇️ 下載
