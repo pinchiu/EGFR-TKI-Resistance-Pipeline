@@ -53,12 +53,13 @@ def visualize_results():
         print(f"錯誤：找不到檔案 {PATIENT_FILE}。請先執行 analyze_cooccurrence.py。")
         return
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(10, 8))
     status_counts = patient_df['Status'].value_counts()
-    sns.barplot(x=status_counts.index, y=status_counts.values, palette="magma")
+    # Swap x and y for horizontal bar chart
+    sns.barplot(y=status_counts.index, x=status_counts.values, palette="magma")
     plt.title("病人突變狀態分佈")
-    plt.xlabel("狀態")
-    plt.ylabel("病人數量")
+    plt.xlabel("病人數量")
+    plt.ylabel("狀態")
     plt.tight_layout()
     plt.savefig(os.path.join(OUTPUT_DIR, "patient_status.png"))
     plt.close()

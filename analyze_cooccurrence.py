@@ -84,16 +84,25 @@ def analyze_cooccurrence(df_clean):
     for idx, row in patient_data.iterrows():
         muts = row['HGVSp_Short']
         pid = row['Tumor_Sample_Barcode']
-        has_sens = any(m for m in muts if 'L858R' in m or 'Exon 19' in m or 'del' in str(m).lower()) # 簡化判斷
-        has_res = any(m for m in muts if 'T790M' in m or 'C797S' in m)
+        groups = row['Mutation_Group']
         
-        status = "Other"
+        # 定義致敏和抗藥群組
+        sensitizing_set = {'L858R', 'Exon 19 Del', 'G719X', 'L861Q', 'S768I', 'Uncommon Sensitizing'}
+        resistance_set = {'T790M', 'C797S'}
+        
+        has_sens = not groups.isdisjoint(sensitizing_set)
+        has_res = not groups.isdisjoint(resistance_set)
+        
+        status = "Unknown"
+        
         if has_sens and has_res:
-            status = "Co-occurrence"
-        elif has_sens:
-            status = "Sensitizing Only"
-        elif has_res:
-            status = "Resistance Only"
+            status = "Co-occurrence (Sens+Res)"
+        elif len(groups) == 1:
+            # 如果只有一種突變，直接用該突變名稱 (例如 "L858R", "Exon 19 Del")
+            status = list(groups)[0]
+        else:
+            # 多重突變 (例如 "L858R + Other")
+            status = " + ".join(sorted(groups))
             
         old_results.append({
             "Patient_ID": pid,
