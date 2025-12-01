@@ -24,8 +24,6 @@
 無論使用哪種方法，請先下載專案程式碼：
 
 ```bash
-# 請將 URL 換成您的 GitHub 專案網址
-git clone https://github.com/YOUR_USERNAME/egfr-analysis.git
 cd egfr-analysis
 ```
 
