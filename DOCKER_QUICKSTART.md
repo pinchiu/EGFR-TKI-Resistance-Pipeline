@@ -138,6 +138,31 @@ Get-ChildItem results
 
 ---
 
+## 如何在另一台電腦執行？
+
+如果您想將此專案移動到另一台電腦（例如從辦公室移到家裡），請依照以下步驟：
+
+### 1. 複製檔案
+將整個專案資料夾複製到新電腦（透過 USB 或雲端硬碟）。
+*   **必要檔案**：程式碼 (`.py`)、設定檔 (`config.yaml`)、`Dockerfile`、`requirements.txt`。
+*   **選擇性檔案**：`data/` 資料夾。如果不複製，程式會自動重新下載（約 22 MB）。
+
+### 2. 安裝 Docker
+在新電腦上安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop/)。
+
+### 3. 執行指令
+在新電腦的終端機中，進入專案目錄，然後執行與之前相同的指令：
+
+```powershell
+# 1. 建立映像 (只需做一次)
+docker build -t egfr-analysis .
+
+# 2. 執行分析
+docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis
+```
+
+---
+
 ## 常見問題
 
 ### Q1: 如果看到 "Docker daemon is not running" 錯誤？
