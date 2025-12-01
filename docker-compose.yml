@@ -1,0 +1,12 @@
+name: egfr-analysis
+
+services:
+  egfr-analysis:
+    build: .
+    container_name: egfr_mutation_analysis
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+      - ./config.yaml:/app/config.yaml
+    environment:
+      - PYTHONUNBUFFERED=1

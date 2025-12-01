@@ -21,9 +21,8 @@ def visualize_results():
     # Set style (no emojis, clean look)
     sns.set_theme(style="whitegrid")
     
-    # 設定字型：跨平台支援 (Windows/Linux/macOS)
-    # 優先使用標準英文字型 (解決 Linux 英文消失問題)，中文會自動 fallback 到後面的字型
-    plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'Microsoft JhengHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Noto Sans CJK TC', 'SimHei']
+    # 設定字型：優先使用 Noto Sans CJK JP (Docker default for CJK), 回退到 Microsoft JhengHei (Windows)
+    plt.rcParams['font.sans-serif'] = ['Noto Sans CJK JP', 'Noto Sans CJK TC', 'Noto Sans CJK SC', 'Microsoft JhengHei', 'DejaVu Sans']
     plt.rcParams['axes.unicode_minus'] = False
 
     
