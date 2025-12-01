@@ -20,7 +20,8 @@ def visualize_results():
         
     # Set style (no emojis, clean look)
     sns.set_theme(style="whitegrid")
-    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei'] # Windows standard Traditional Chinese font
+    # 設定字型：優先使用 Noto Sans CJK JP (Docker default for CJK), 回退到 Microsoft JhengHei (Windows)
+    plt.rcParams['font.sans-serif'] = ['Noto Sans CJK JP', 'Noto Sans CJK TC', 'Noto Sans CJK SC', 'Microsoft JhengHei', 'DejaVu Sans']
     plt.rcParams['axes.unicode_minus'] = False
 
     
@@ -61,7 +62,7 @@ def visualize_results():
     plt.savefig(os.path.join(OUTPUT_DIR, "patient_status.png"))
     plt.close()
 
-    print("視覺化完成。圖表已儲存至results資料夾")
+    print(f"視覺化完成。圖表已儲存至 {OUTPUT_DIR} 資料夾")
 
 if __name__ == "__main__":
     visualize_results()

@@ -9,10 +9,13 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1
 
-# 安裝系統依賴（如果需要）
+# 安裝系統依賴和中文字型
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     gcc \
+    fonts-noto-cjk \
+    fontconfig \
+    && fc-cache -fv \
     && rm -rf /var/lib/apt/lists/*
 
 # 複製 requirements.txt 並安裝 Python 依賴
