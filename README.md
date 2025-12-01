@@ -6,7 +6,24 @@
 
 ## 1. 快速開始
 
-### 環境需求 (Requirements)
+### 選擇您的執行方式
+
+本專案提供**三種執行方式**，請根據您的需求選擇：
+
+| 方式 | 適合對象 | 優點 | 需要安裝 |
+|------|---------|------|---------|
+| **Docker Compose** (推薦) | 所有使用者 | 最簡單，一鍵執行 | Docker & Docker Compose |
+| **Docker** | 熟悉 Docker 的使用者 | 環境一致，無需配置 Python | Docker |
+| **本地執行** | Python 開發者 | 方便除錯和修改 | Python 3.x + 套件 |
+
+> **推薦**: 如果您已安裝 Docker，直接跳到 [方法 3: Docker Compose](#方法-3-使用-docker-compose-執行-最簡單)
+
+---
+## 2. 如何執行
+
+### 方法 1: 本地執行 (Local Execution)
+
+#### 環境需求
 
 本專案需要 Python 3.x 環境，並安裝以下套件：
 *   `pandas`: 數據處理
@@ -15,24 +32,18 @@
 *   `seaborn`: 進階繪圖
 *   `pyyaml`: 讀取設定檔
 
-您可以透過 `requirements.txt` 檔案一次安裝所有必要的套件：
+#### 安裝依賴套件
 
 ```bash
+# 使用 pip 安裝
 pip install -r requirements.txt
 
-# 或者使用 conda 建立環境
+# 或者使用 conda 建立獨立環境
 conda create --name egfr_env --file requirements.txt
 conda activate egfr_env
 ```
 
----
-## 2. 如何執行
-
-本專案提供三種執行方式，您可以選擇最適合您的方法：
-
-### 方法 1: 本地執行 (Local Execution)
-
-在終端機中執行以下指令即可跑完所有流程：
+#### 執行分析
 
 ```bash
 python run_pipeline.py
