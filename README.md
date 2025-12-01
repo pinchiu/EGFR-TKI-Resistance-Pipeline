@@ -6,28 +6,7 @@
 
 ## 1. 快速開始
 
-### 選擇您的執行方式
-
-本專案提供**三種執行方式**，請根據您的需求選擇：
-
-| 方式 | 適合對象 | 優點 | 需要安裝 |
-|------|---------|------|---------|
-| **Docker Compose** | 所有使用者 | 最簡單，一鍵執行 | Docker & Docker Compose |
-| **Docker** | 熟悉 Docker 的使用者 | 環境一致，無需配置 Python | Docker |
-| **本地執行** | Python 開發者 | 方便除錯和修改 | Python 3.x + 套件 |
-
-> **推薦**: 如果您已安裝 Docker，直接跳到 [方法 3: Docker Compose](#方法-3-使用-docker-compose-執行最簡單)
-> 
-> **Docker 新手？** 請先閱讀 [DOCKER_QUICKSTART.md](DOCKER_QUICKSTART.md) - 5 分鐘快速入門
-> 
-> **進階使用者**: 詳細的 Docker 使用說明和疑難排解請參考 [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
-
----
-## 2. 如何執行
-
-### 方法 1: 本地執行 (Local Execution)
-
-#### 環境需求
+### 環境需求
 
 本專案需要 Python 3.x 環境，並安裝以下套件：
 *   `pandas`: 數據處理
@@ -36,201 +15,34 @@
 *   `seaborn`: 進階繪圖
 *   `pyyaml`: 讀取設定檔
 
-#### 安裝依賴套件
+### 安裝依賴套件
 
 ```bash
-# 使用 pip 安裝
 pip install -r requirements.txt
-
-# 或者使用 conda 建立獨立環境
-conda create --name egfr_env --file requirements.txt
-conda activate egfr_env
 ```
 
-#### 執行分析
+### 執行分析
 
 ```bash
 python run_pipeline.py
 ```
 
-### 方法 2: 使用 Docker 執行
+---
+## 2. 如何執行
 
-使用 Docker 可以確保環境一致性，無需手動安裝 Python 套件。
-
-#### 前置需求
-
-確認您已安裝 Docker：
-```bash
-docker --version
-```
-
-如果尚未安裝，請參考 [Docker 官方安裝指南](https://docs.docker.com/get-docker/)
-
-#### 步驟 1: 建立 Docker 映像
-
-在專案根目錄執行：
-```bash
-docker build -t egfr-analysis .
-```
-
-**說明**：
-- `-t egfr-analysis`: 為映像命名為 `egfr-analysis`
-- `.`: 使用當前目錄的 Dockerfile
-
-**預期輸出**：會看到多個步驟（Step 1/X），最後顯示 `Successfully tagged egfr-analysis:latest`
-
-#### 步驟 2: 建立必要的目錄
+請確保您已安裝所有依賴套件，然後在專案根目錄執行：
 
 ```bash
-# Linux / macOS
-mkdir -p data results
-
-# Windows PowerShell
-New-Item -ItemType Directory -Force -Path data, results
+python run_pipeline.py
 ```
 
-#### 步驟 3: 執行分析
+程式將會自動執行：
+1.  下載數據 (如果尚未下載)
+2.  清洗數據
+3.  進行共現性分析
+4.  產生視覺化圖表
 
-**Linux / macOS / Git Bash:**
-```bash
-docker run --rm \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/results:/app/results \
-  egfr-analysis
-```
-
-**Windows PowerShell:**
-```powershell
-docker run --rm `
-  -v ${PWD}/data:/app/data `
-  -v ${PWD}/results:/app/results `
-  egfr-analysis
-```
-
-**Windows CMD:**
-```cmd
-docker run --rm -v %cd%/data:/app/data -v %cd%/results:/app/results egfr-analysis
-```
-
-**參數說明**：
-- `--rm`: 執行完畢後自動刪除容器
-- `-v`: 掛載本地目錄到容器內
-  - `data:/app/data`: 下載的資料會保存在本地 `data/` 目錄
-  - `results:/app/results`: 分析結果會保存在本地 `results/` 目錄
-
-#### 進階使用
-
-**進入容器互動模式（用於除錯）：**
-```bash
-docker run -it --rm \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/results:/app/results \
-  egfr-analysis /bin/bash
-```
-
-進入後可以手動執行個別腳本：
-```bash
-python download_tcga_data.py
-python clean_data.py
-python analyze_cooccurrence.py
-python visualize_results.py
-```
-
-**只執行特定腳本：**
-```bash
-docker run --rm \
-  -v $(pwd)/data:/app/data \
-  -v $(pwd)/results:/app/results \
-  egfr-analysis python clean_data.py
-```
-
-### 方法 3: 使用 Docker Compose 執行（最簡單）
-
-Docker Compose 可以簡化 Docker 指令，推薦使用此方法。
-
-#### 前置需求
-
-確認您已安裝 Docker Compose：
-```bash
-docker-compose --version
-# 或新版本
-docker compose version
-```
-
-#### 執行步驟
-
-**1. 建立並執行（前景模式）：**
-```bash
-docker-compose up
-```
-或使用新版指令：
-```bash
-docker compose up
-```
-
-**說明**：
-- 第一次執行會自動建立映像
-- 執行完畢後按 `Ctrl+C` 停止
-
-**2. 在背景執行：**
-```bash
-docker-compose up -d
-```
-
-**3. 查看執行日誌：**
-```bash
-# 查看所有日誌
-docker-compose logs
-
-# 即時追蹤日誌
-docker-compose logs -f
-
-# 只看最後 50 行
-docker-compose logs --tail=50
-```
-
-**4. 停止並清理：**
-```bash
-# 停止容器
-docker-compose stop
-
-# 停止並移除容器
-docker-compose down
-
-# 停止、移除容器並刪除映像
-docker-compose down --rmi all
-```
-
-#### 常見問題排解
-
-**問題 1: 權限錯誤（Linux）**
-```bash
-# 如果遇到權限問題，可以修改目錄權限
-sudo chown -R $USER:$USER data results
-```
-
-**問題 2: 映像建立失敗**
-```bash
-# 清理舊的映像和快取
-docker system prune -a
-
-# 重新建立
-docker-compose build --no-cache
-```
-
-**問題 3: 容器無法啟動**
-```bash
-# 查看詳細錯誤訊息
-docker-compose logs
-
-# 檢查容器狀態
-docker-compose ps
-```
-
-**問題 4: 中文目錄名稱問題**
-如果您的專案位於包含中文字元的目錄中，建議：
-1. 將專案移至英文路徑，或
-2. 使用方法 2（直接使用 docker run）
+所有結果將儲存在 `results/` 資料夾中。
 
 ## 3. 系統架構與流程 (Workflow)
 
@@ -499,21 +311,16 @@ def main():
 *   **`requirements.txt`**: **安裝清單**。列出了執行此程式需要的 Python 套件 (如 pandas, requests)。
 *   **`EGFR_Resistance_Mutations_Ground_Truth.csv`**: **標準答案**。我們預先定義好的抗藥性突變列表，作為參考基準。
 
-### Docker 相關檔案
-*   **`Dockerfile`**: **容器定義檔**。定義如何建立 Docker 映像，包含 Python 環境、依賴套件安裝等步驟。
-*   **`docker-compose.yml`**: **容器編排檔**。簡化 Docker 容器的啟動與管理，包含 volume 掛載設定。
-*   **`.dockerignore`**: **排除清單**。指定哪些檔案不需要複製到 Docker 映像中，減少映像大小。
-*   **`DOCKER_QUICKSTART.md`**: **快速入門指南**。5 分鐘快速上手 Docker 執行的逐步說明。
-*   **`DOCKER_GUIDE.md`**: **完整 Docker 指南**。包含詳細操作說明與常見問題排解。
+
 
 ## 7. 資料流向圖 (Data Flow)
 
 1.  **雲端 (GDC API)**
-    | 下載
+    ⬇️ 下載
 2.  **原始數據 (`.maf`)**
-    | 清洗 (`clean_data.py`)
+    ⬇️ 清洗 (`clean_data.py`)
 3.  **乾淨數據 (`.csv`)**
-    | 分析 (`analyze_cooccurrence.py`)
+    ⬇️ 分析 (`analyze_cooccurrence.py`)
 4.  **統計結果 (`.csv`)**
-    | 繪圖 (`visualize_results.py`)
+    ⬇️ 繪圖 (`visualize_results.py`)
 5.  **圖表 (`.png`)**

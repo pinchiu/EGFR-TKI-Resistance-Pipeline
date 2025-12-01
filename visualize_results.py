@@ -20,8 +20,8 @@ def visualize_results():
         
     # Set style (no emojis, clean look)
     sns.set_theme(style="whitegrid")
-    # 設定字型：優先使用 Noto Sans CJK JP (Docker default for CJK), 回退到 Microsoft JhengHei (Windows)
-    plt.rcParams['font.sans-serif'] = ['Noto Sans CJK JP', 'Noto Sans CJK TC', 'Noto Sans CJK SC', 'Microsoft JhengHei', 'DejaVu Sans']
+    # 設定字型：使用 Microsoft JhengHei (Windows)
+    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
     plt.rcParams['axes.unicode_minus'] = False
 
     
