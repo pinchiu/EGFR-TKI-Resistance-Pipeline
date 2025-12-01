@@ -1,0 +1,9 @@
+Mutation,Type,Description
+L858R,Sensitizing,Common sensitizing mutation in Exon 21
+Exon 19 Del,Sensitizing,Common sensitizing deletion in Exon 19
+G719X,Sensitizing,Less common sensitizing mutation in Exon 18
+L861Q,Sensitizing,Less common sensitizing mutation in Exon 21
+S768I,Sensitizing,Less common sensitizing mutation in Exon 20
+T790M,Resistance,Common resistance mutation in Exon 20 (Gatekeeper)
+C797S,Resistance,Resistance to 3rd gen TKI (Osimertinib)
+Exon 20 Ins,Resistance,Generally resistant to 1st/2nd gen TKIs

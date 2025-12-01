@@ -1,0 +1,17 @@
+project:
+  id: "TCGA-LUAD"
+  workflow_type: "Aliquot Ensemble Somatic Variant Merging and Masking"
+  data_format: "MAF"
+
+paths:
+  data_dir: "./data"
+  raw_maf: "./data/TCGA_LUAD_Somatic_Mutations_Raw.maf"
+  cleaned_csv: "./EGFR_Mutations_Cleaned_Processed.csv"
+  ground_truth: "./EGFR_Resistance_Mutations_Ground_Truth.csv"
+  output_dir: "./results"
+
+analysis:
+  gene: "EGFR"
+  mutations:
+    sensitizing: ["L858R", "Exon 19 Del", "G719X", "L861Q", "S768I"]
+    resistance: ["T790M", "C797S", "Exon 20 Ins"]
