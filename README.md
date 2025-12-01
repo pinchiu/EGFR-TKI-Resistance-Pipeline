@@ -16,12 +16,6 @@
 | **Docker** | 熟悉 Docker 的使用者 | 環境一致，無需配置 Python | Docker |
 | **本地執行** | Python 開發者 | 方便除錯和修改 | Python 3.x + 套件 |
 
-> **推薦**: 如果您已安裝 Docker，直接跳到 [方法 3: Docker Compose](#方法-3-使用-docker-compose-執行最簡單)
-> 
-> **Docker 新手？** 請先閱讀 [DOCKER_QUICKSTART.md](DOCKER_QUICKSTART.md) - 5 分鐘快速入門
-> 
-> **進階使用者**: 詳細的 Docker 使用說明和疑難排解請參考 [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
-
 ---
 ## 2. 如何執行
 
