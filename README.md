@@ -12,7 +12,7 @@
 
 | 方式 | 適合對象 | 優點 | 需要安裝 |
 |------|---------|------|---------|
-| **Docker Compose** (推薦) | 所有使用者 | 最簡單，一鍵執行 | Docker & Docker Compose |
+| **Docker Compose** | 所有使用者 | 最簡單，一鍵執行 | Docker & Docker Compose |
 | **Docker** | 熟悉 Docker 的使用者 | 環境一致，無需配置 Python | Docker |
 | **本地執行** | Python 開發者 | 方便除錯和修改 | Python 3.x + 套件 |
 
