@@ -1,4 +1,4 @@
-# EGFR 突變分析專案完整詳解
+# EGFR 突變分析
 
 這個專案的目標是從 TCGA (The Cancer Genome Atlas) 資料庫下載肺腺癌 (LUAD) 的基因突變數據，並針對 EGFR 基因進行分析，特別是探討致敏性突變 (Sensitizing Mutations) 與抗藥性突變 (Resistance Mutations) 的共現 (Co-occurrence) 情況。
 
