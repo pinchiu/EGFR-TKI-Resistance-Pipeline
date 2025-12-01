@@ -263,7 +263,22 @@ def main():
 
 ---
 
-## 4. 如何執行
+## 4. 環境需求 (Requirements)
+
+本專案需要 Python 3.x 環境，並安裝以下套件：
+*   `pandas`: 數據處理
+*   `requests`: 網路下載
+*   `matplotlib`: 繪圖基礎
+*   `seaborn`: 進階繪圖
+*   `pyyaml`: 讀取設定檔
+
+您可以透過以下指令一次安裝所有套件：
+
+```bash
+pip install -r requirements.txt
+```
+
+## 5. 如何執行
 
 在終端機中執行以下指令即可跑完所有流程：
 
