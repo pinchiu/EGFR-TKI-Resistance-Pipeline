@@ -22,7 +22,7 @@ def analyze_cooccurrence(df_clean):
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    print("🔍 Stage 3: Co-occurrence Analysis")
+    print("Stage 3: Co-occurrence Analysis")
     print("=" * 50)
     
     # Step 1: 按病人分組，每個病人有哪些突變
@@ -30,7 +30,7 @@ def analyze_cooccurrence(df_clean):
     patient_mutations = df_clean.groupby('Tumor_Sample_Barcode')['HGVSp_Short'].apply(set).reset_index()
     total_patients = len(patient_mutations)
     
-    print(f"📊 總病人數: {total_patients}")
+    print(f" 共有 {total_patients} 位病人的腫瘤樣本被檢測出帶有 EGFR 基因突變")
     
     # Step 2: 計算單獨突變數量
     all_mutations = []
@@ -38,12 +38,17 @@ def analyze_cooccurrence(df_clean):
         all_mutations.extend(mutations)
     
     mutation_counts = Counter(all_mutations)
-    print("\n📈 單獨突變統計:")
+    print("\n 單獨突變統計:")
     for mutation, count in mutation_counts.most_common(5):
         percentage = (count / total_patients) * 100
-        print(f"  {mutation:10s}: {count:3d} 病例 ({percentage:5.1f}%)")
+        # Custom label for Exon 19 Deletion if needed, or just print as is
+        display_name = mutation
+        if "del" in mutation and "E746" in mutation:
+             display_name = "Exon 19 Deletion (p.E746_A750del)"
+        
+        print(f"  {display_name:30s}: {count:3d} 例 ({percentage:5.1f}%)")
     
-    # Step 3: 找 L858R + T790M 組合 ⭐ 核心！
+    # Step 3: 找 L858R + T790M 組合 核心！
     # 為了兼容性，我們同時檢查有 'p.' 和沒有 'p.' 的情況，或者直接檢查關鍵字
     l858r_t790m_cases = patient_mutations[
         patient_mutations['HGVSp_Short'].apply(
@@ -55,10 +60,10 @@ def analyze_cooccurrence(df_clean):
     t790m_count = len(patient_mutations[patient_mutations['HGVSp_Short'].apply(lambda x: any('T790M' in m for m in x))])
     combo_count = len(l858r_t790m_cases)
     
-    print(f"\n🔥 關鍵組合統計:")
+    print(f"\n 關鍵組合統計:")
     print(f"  L858R:      {l858r_count:3d} 病例 ({l858r_count/total_patients*100:5.1f}%)")
     print(f"  T790M:       {t790m_count:3d} 病例 ({t790m_count/total_patients*100:5.1f}%)")
-    print(f"  L858R+T790M: {combo_count:3d} 病例 ({combo_count/total_patients*100:5.1f}%) ← 教科書驗證✅")
+    print(f"  L858R+T790M: {combo_count:3d} 病例 ({combo_count/total_patients*100:5.1f}%) ")
     
     # Step 4: 保存結果
     results = {
@@ -71,7 +76,7 @@ def analyze_cooccurrence(df_clean):
     
     output_path = os.path.join(OUTPUT_DIR, 'cooccurrence_stats.csv')
     pd.DataFrame([results]).to_csv(output_path, index=False)
-    print(f"\n✅ 結果已保存: {output_path}")
+    print(f"\n結果已保存: {output_path}")
     
     # 為了兼容 visualize_results.py，我們也產生舊格式的 patient_analysis.csv
     # 重新建構舊格式的 status
