@@ -3,25 +3,20 @@
 這個系統的目標是從 TCGA 資料庫下載肺腺癌 (LUAD) 的基因數據，並分析 EGFR 基因的致病突變與抗藥性突變是否同時存在 (Co-occurrence)。
 
 
-## 1. 生物特殊名詞 (Biological Terms)
+## 1. 環境需求 (Requirements)
 
-在代碼中，我們使用了以下生物學和生物資訊學的專有名詞：
+本專案需要 Python 3.x 環境，並安裝以下套件：
+*   `pandas`: 數據處理
+*   `requests`: 網路下載
+*   `matplotlib`: 繪圖基礎
+*   `seaborn`: 進階繪圖
+*   `pyyaml`: 讀取設定檔
 
-*   **EGFR (Epidermal Growth Factor Receptor)**: 表皮生長因子受體。這是我們主要分析的基因，其突變與肺腺癌的治療反應密切相關。
-*   **LUAD (Lung Adenocarcinoma)**: 肺腺癌。我們從 TCGA 下載的數據項目代碼 (TCGA-LUAD)。
-*   **TCGA (The Cancer Genome Atlas)**: 癌症基因圖譜計畫。我們數據的來源資料庫。
-*   **GDC (Genomic Data Commons)**: 基因組數據共享平台。我們通過其 API 下載數據。
-*   **MAF (Mutation Annotation Format)**: 突變註釋格式。這是一種標準的文字檔案格式，用於儲存基因突變資訊。
-*   **Sensitizing Mutations (敏感性突變)**: 這些突變會讓腫瘤對 TKI (酪氨酸激酶抑制劑) 藥物敏感（有效）。
-    *   **L858R**: 第 21 外顯子上的點突變。
-    *   **Exon 19 Del**: 第 19 外顯子的缺失突變 (Deletion)。
-    *   **G719X, L861Q, S768I**: 其他較少見的敏感性突變。
-*   **Resistance Mutations (抗藥性突變)**: 這些突變會導致腫瘤對第一代或第二代 TKI 藥物產生抗藥性。
-    *   **T790M**: 最常見的抗藥性突變，位於第 20 外顯子。
-    *   **C797S**: 與第三代 TKI 藥物抗藥性相關的突變。
-    *   **Exon 20 Ins**: 第 20 外顯子的插入突變 (Insertion)，通常對傳統 TKI 藥物具有抗性。
-*   **HGVSp_Short**: 蛋白質層次的變異表示法 (例如 p.L858R)。
-*   **Hugo_Symbol**: 基因的標準符號 (例如 EGFR)。
+您可以透過以下指令一次安裝所有套件：
+
+```bash
+pip install -r requirements.txt
+```
 
 ---
 
@@ -263,20 +258,25 @@ def main():
 
 ---
 
-## 4. 環境需求 (Requirements)
+## 4. 生物特殊名詞 (Biological Terms)
 
-本專案需要 Python 3.x 環境，並安裝以下套件：
-*   `pandas`: 數據處理
-*   `requests`: 網路下載
-*   `matplotlib`: 繪圖基礎
-*   `seaborn`: 進階繪圖
-*   `pyyaml`: 讀取設定檔
+在代碼中，我們使用了以下生物學和生物資訊學的專有名詞：
 
-您可以透過以下指令一次安裝所有套件：
-
-```bash
-pip install -r requirements.txt
-```
+*   **EGFR (Epidermal Growth Factor Receptor)**: 表皮生長因子受體。這是我們主要分析的基因，其突變與肺腺癌的治療反應密切相關。
+*   **LUAD (Lung Adenocarcinoma)**: 肺腺癌。我們從 TCGA 下載的數據項目代碼 (TCGA-LUAD)。
+*   **TCGA (The Cancer Genome Atlas)**: 癌症基因圖譜計畫。我們數據的來源資料庫。
+*   **GDC (Genomic Data Commons)**: 基因組數據共享平台。我們通過其 API 下載數據。
+*   **MAF (Mutation Annotation Format)**: 突變註釋格式。這是一種標準的文字檔案格式，用於儲存基因突變資訊。
+*   **Sensitizing Mutations (敏感性突變)**: 這些突變會讓腫瘤對 TKI (酪氨酸激酶抑制劑) 藥物敏感（有效）。
+    *   **L858R**: 第 21 外顯子上的點突變。
+    *   **Exon 19 Del**: 第 19 外顯子的缺失突變 (Deletion)。
+    *   **G719X, L861Q, S768I**: 其他較少見的敏感性突變。
+*   **Resistance Mutations (抗藥性突變)**: 這些突變會導致腫瘤對第一代或第二代 TKI 藥物產生抗藥性。
+    *   **T790M**: 最常見的抗藥性突變，位於第 20 外顯子。
+    *   **C797S**: 與第三代 TKI 藥物抗藥性相關的突變。
+    *   **Exon 20 Ins**: 第 20 外顯子的插入突變 (Insertion)，通常對傳統 TKI 藥物具有抗性。
+*   **HGVSp_Short**: 蛋白質層次的變異表示法 (例如 p.L858R)。
+*   **Hugo_Symbol**: 基因的標準符號 (例如 EGFR)。
 
 ## 5. 如何執行
 
