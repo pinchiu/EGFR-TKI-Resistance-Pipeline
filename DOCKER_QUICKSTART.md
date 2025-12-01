@@ -20,7 +20,7 @@
 docker --version
 ```
 
-如果看到版本號（例如 `Docker version 28.5.1`），表示已安裝。
+如果看到版本號（例如 `Docker version 20.10.x`），表示已安裝。
 
 如果沒有安裝，請到 https://www.docker.com/get-started 下載並安裝 Docker Desktop。
 
@@ -28,16 +28,14 @@ docker --version
 
 ## 執行步驟
 
-### 步驟 1: 開啟終端機並切換到專案目錄
+### 步驟 1: 下載專案 (Clone)
 
-**Windows PowerShell:**
-```powershell
-cd E:\概論
-```
+在新電腦的終端機執行：
 
-**或使用英文路徑（如果您已移動專案）:**
 ```powershell
-cd E:\egfr-analysis
+# 請將 URL 換成您的 GitHub 專案網址
+git clone https://github.com/YOUR_USERNAME/egfr-analysis.git
+cd egfr-analysis
 ```
 
 ### 步驟 2: 建立 Docker 映像
@@ -66,9 +64,6 @@ docker build -t egfr-analysis .
 ```powershell
 New-Item -ItemType Directory -Force -Path data, results
 ```
-
-**預期結果：**
-- 會在專案目錄下建立 `data/` 和 `results/` 兩個資料夾
 
 ### 步驟 4: 執行分析
 
@@ -115,54 +110,6 @@ Get-ChildItem results
 
 ---
 
-## 完整範例（複製貼上即可）
-
-如果您想一次執行所有步驟，可以複製以下指令：
-
-```powershell
-# 切換到專案目錄
-cd E:\概論
-
-# 建立 Docker 映像
-docker build -t egfr-analysis .
-
-# 建立資料目錄
-New-Item -ItemType Directory -Force -Path data, results
-
-# 執行分析
-docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis
-
-# 查看結果
-Get-ChildItem results
-```
-
----
-
-## 如何在另一台電腦執行？
-
-如果您想將此專案移動到另一台電腦（例如從辦公室移到家裡），請依照以下步驟：
-
-### 1. 複製檔案
-將整個專案資料夾複製到新電腦（透過 USB 或雲端硬碟）。
-*   **必要檔案**：程式碼 (`.py`)、設定檔 (`config.yaml`)、`Dockerfile`、`requirements.txt`。
-*   **選擇性檔案**：`data/` 資料夾。如果不複製，程式會自動重新下載（約 22 MB）。
-
-### 2. 安裝 Docker
-在新電腦上安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop/)。
-
-### 3. 執行指令
-在新電腦的終端機中，進入專案目錄，然後執行與之前相同的指令：
-
-```powershell
-# 1. 建立映像 (只需做一次)
-docker build -t egfr-analysis .
-
-# 2. 執行分析
-docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis
-```
-
----
-
 ## 常見問題
 
 ### Q1: 如果看到 "Docker daemon is not running" 錯誤？
@@ -186,60 +133,12 @@ New-Item -ItemType Directory -Force -Path data, results
 docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis
 ```
 
-### Q3: 如果只想執行特定步驟？
+### Q3: 如何在另一台電腦執行？
 
-**只下載資料：**
-```powershell
-docker run --rm -v ${PWD}/data:/app/data egfr-analysis python download_tcga_data.py
-```
+由於本專案已發布至 GitHub，在另一台電腦上執行非常簡單：
 
-**只清洗資料：**
-```powershell
-docker run --rm -v ${PWD}/data:/app/data egfr-analysis python clean_data.py
-```
+1.  **安裝 Docker Desktop**。
+2.  **Git Clone** 下載專案。
+3.  執行 `docker build` 和 `docker run`。
 
-**只分析：**
-```powershell
-docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis python analyze_cooccurrence.py
-```
-
-**只視覺化：**
-```powershell
-docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis python visualize_results.py
-```
-
-### Q4: 如何進入容器內部除錯？
-
-**解決方法：**
-```powershell
-docker run -it --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis /bin/bash
-```
-
-進入後可以手動執行指令：
-```bash
-ls -la data/
-python download_tcga_data.py
-python clean_data.py
-exit  # 離開容器
-```
-
----
-
-## 清理 Docker 資源
-
-如果想清理 Docker 映像和容器以釋放空間：
-
-```powershell
-# 刪除 egfr-analysis 映像
-docker rmi egfr-analysis
-
-# 清理所有未使用的映像和容器
-docker system prune -a
-```
-
----
-
-## 需要更多協助？
-
-- 詳細的疑難排解：請參考 [DOCKER_GUIDE.md](DOCKER_GUIDE.md)
-- 完整的專案說明：請參考 [README.md](README.md)
+> **注意**：您 **不需要** 在新電腦上安裝 Python 或任何程式庫！Docker 會處理好所有環境。
