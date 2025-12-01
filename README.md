@@ -19,6 +19,10 @@
 
 ```bash
 pip install -r requirements.txt
+
+# 或者使用 conda 建立環境
+conda create --name egfr_env --file requirements.txt
+conda activate egfr_env
 ```
 
 ---
