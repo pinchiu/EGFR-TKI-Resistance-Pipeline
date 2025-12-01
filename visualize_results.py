@@ -20,8 +20,9 @@ def visualize_results():
         
     # Set style (no emojis, clean look)
     sns.set_theme(style="whitegrid")
-    # 設定字型：使用 Microsoft JhengHei (Windows)
-    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
+    # 設定字型：跨平台支援 (Windows/Linux/macOS)
+    # 優先順序：Windows 正黑體 -> Linux 文泉驛/Droid -> Google Noto -> 預設無襯線
+    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Noto Sans CJK TC', 'SimHei', 'DejaVu Sans']
     plt.rcParams['axes.unicode_minus'] = False
 
     
@@ -62,7 +63,8 @@ def visualize_results():
     plt.savefig(os.path.join(OUTPUT_DIR, "patient_status.png"))
     plt.close()
 
-    print(f"視覺化完成。圖表已儲存至 {OUTPUT_DIR} 資料夾")
+    abs_output_dir = os.path.abspath(OUTPUT_DIR)
+    print(f"視覺化完成。圖表已儲存至 {abs_output_dir} 資料夾")
 
 if __name__ == "__main__":
     visualize_results()
