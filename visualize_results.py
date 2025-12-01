@@ -20,9 +20,10 @@ def visualize_results():
         
     # Set style (no emojis, clean look)
     sns.set_theme(style="whitegrid")
+    
     # 設定字型：跨平台支援 (Windows/Linux/macOS)
-    # 優先順序：Windows 正黑體 -> Linux 文泉驛/Droid -> Google Noto -> 預設無襯線
-    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Noto Sans CJK TC', 'SimHei', 'DejaVu Sans']
+    # 優先使用標準英文字型 (解決 Linux 英文消失問題)，中文會自動 fallback 到後面的字型
+    plt.rcParams['font.sans-serif'] = ['DejaVu Sans', 'Arial', 'Microsoft JhengHei', 'WenQuanYi Micro Hei', 'Droid Sans Fallback', 'Noto Sans CJK TC', 'SimHei']
     plt.rcParams['axes.unicode_minus'] = False
 
     
