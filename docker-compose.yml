@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  egfr-analysis:
+    build: .
+    container_name: egfr_mutation_analysis
+    volumes:
+      # 掛載 data 和 results 目錄，讓資料可以持久化
+      - ./data:/app/data
+      - ./results:/app/results
+      # 如果需要修改設定檔，也可以掛載
+      - ./config.yaml:/app/config.yaml
+    environment:
+      - PYTHONUNBUFFERED=1
+    # 如果需要互動式執行，可以加上這些
+    # stdin_open: true
+    # tty: true

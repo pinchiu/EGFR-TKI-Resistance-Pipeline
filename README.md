@@ -28,10 +28,55 @@ conda activate egfr_env
 ---
 ## 2. 如何執行
 
+本專案提供三種執行方式，您可以選擇最適合您的方法：
+
+### 方法 1: 本地執行 (Local Execution)
+
 在終端機中執行以下指令即可跑完所有流程：
 
 ```bash
 python run_pipeline.py
+```
+
+### 方法 2: 使用 Docker 執行 (推薦)
+
+使用 Docker 可以確保環境一致性，無需手動安裝 Python 套件。
+
+#### 建立 Docker 映像
+```bash
+docker build -t egfr-analysis .
+```
+
+#### 執行分析
+```bash
+# 執行完整流程
+docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis
+
+# Windows PowerShell 使用者請用:
+docker run --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis
+```
+
+#### 進入容器互動模式（用於除錯）
+```bash
+docker run -it --rm -v ${PWD}/data:/app/data -v ${PWD}/results:/app/results egfr-analysis /bin/bash
+```
+
+### 方法 3: 使用 Docker Compose 執行 (最簡單)
+
+如果您已安裝 Docker Compose，這是最簡單的方式：
+
+```bash
+# 建立並執行
+docker-compose up
+
+# 在背景執行
+docker-compose up -d
+
+# 查看執行日誌
+docker-compose logs -f
+
+# 停止並清理
+docker-compose down
 ```
 
 ## 3. 系統架構與流程 (Workflow)
@@ -296,9 +341,15 @@ def main():
 
 ## 6. 檔案結構說明
 
+### 核心設定檔
 *   **`config.yaml`**: **控制中心**。所有的設定都在這裡，例如檔案路徑、基因名稱、突變列表。如果你想改分析別的基因 (例如 KRAS)，只要改這裡就好。
 *   **`requirements.txt`**: **安裝清單**。列出了執行此程式需要的 Python 套件 (如 pandas, requests)。
 *   **`EGFR_Resistance_Mutations_Ground_Truth.csv`**: **標準答案**。我們預先定義好的抗藥性突變列表，作為參考基準。
+
+### Docker 相關檔案
+*   **`Dockerfile`**: **容器定義檔**。定義如何建立 Docker 映像，包含 Python 環境、依賴套件安裝等步驟。
+*   **`docker-compose.yml`**: **容器編排檔**。簡化 Docker 容器的啟動與管理，包含 volume 掛載設定。
+*   **`.dockerignore`**: **排除清單**。指定哪些檔案不需要複製到 Docker 映像中，減少映像大小。
 
 ## 7. 資料流向圖 (Data Flow)
 
