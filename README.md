@@ -37,6 +37,7 @@ cd egfr-analysis
 *   `matplotlib`: 繪圖基礎
 *   `seaborn`: 進階繪圖
 *   `pyyaml`: 讀取設定檔
+*   `tqdm`: 進度條顯示
 
 #### 安裝依賴套件
 
@@ -505,8 +506,10 @@ def main():
 *   **`Dockerfile`**: **容器定義檔**。定義如何建立 Docker 映像，包含 Python 環境、依賴套件安裝等步驟。
 *   **`docker-compose.yml`**: **容器編排檔**。簡化 Docker 容器的啟動與管理，包含 volume 掛載設定。
 *   **`.dockerignore`**: **排除清單**。指定哪些檔案不需要複製到 Docker 映像中，減少映像大小。
-*   **`DOCKER_QUICKSTART.md`**: **快速入門指南**。5 分鐘快速上手 Docker 執行的逐步說明。
-*   **`DOCKER_GUIDE.md`**: **完整 Docker 指南**。包含詳細操作說明與常見問題排解。
+
+### 輔助工具
+*   **`inspect_others.py`**: **檢查工具**。用來查看被歸類為 "Other EGFR Mutation" 的具體突變內容，幫助優化分類邏輯。
+*   **`test_classify.py`**: **測試單元**。用來測試突變分類函式 (`classify_mutation`) 是否正確運作的小程式。
 
 
 

@@ -26,38 +26,38 @@ def analyze_cooccurrence(df_clean):
     print("=" * 50)
     
     # Step 1: 按病人分組，每個病人有哪些突變
-    # 注意：這裡假設 HGVSp_Short 欄位包含 p.L858R 這樣的字串
-    patient_mutations = df_clean.groupby('Tumor_Sample_Barcode')['HGVSp_Short'].apply(set).reset_index()
-    total_patients = len(patient_mutations)
+    # 我們同時收集 HGVSp_Short (用於細節) 和 Mutation_Group (用於統計)
+    patient_data = df_clean.groupby('Tumor_Sample_Barcode').agg({
+        'HGVSp_Short': set,
+        'Mutation_Group': set
+    }).reset_index()
+    
+    total_patients = len(patient_data)
     
     print(f" 共有 {total_patients} 位病人的腫瘤樣本被檢測出帶有 EGFR 基因突變")
     
-    # Step 2: 計算單獨突變數量
-    all_mutations = []
-    for mutations in patient_mutations['HGVSp_Short']:
-        all_mutations.extend(mutations)
+    # Step 2: 計算突變群組數量 (Mutation Group Counts)
+    # 這樣才能跟 visualize_results.py 的圖表對上 (圖表是畫 Group)
+    all_groups = []
+    for groups in patient_data['Mutation_Group']:
+        all_groups.extend(groups)
     
-    mutation_counts = Counter(all_mutations)
-    print("\n 單獨突變統計:")
-    for mutation, count in mutation_counts.most_common(5):
+    group_counts = Counter(all_groups)
+    print("\n 突變群組統計 (對應圖表):")
+    for group, count in group_counts.most_common(10):
         percentage = (count / total_patients) * 100
-        # Custom label for Exon 19 Deletion if needed, or just print as is
-        display_name = mutation
-        if "del" in mutation and "E746" in mutation:
-             display_name = "Exon 19 Deletion (p.E746_A750del)"
-        
-        print(f"  {display_name:30s}: {count:3d} 例 ({percentage:5.1f}%)")
+        print(f"  {group:30s}: {count:3d} 例 ({percentage:5.1f}%)")
     
     # Step 3: 找 L858R + T790M 組合 核心！
     # 為了兼容性，我們同時檢查有 'p.' 和沒有 'p.' 的情況，或者直接檢查關鍵字
-    l858r_t790m_cases = patient_mutations[
-        patient_mutations['HGVSp_Short'].apply(
+    l858r_t790m_cases = patient_data[
+        patient_data['HGVSp_Short'].apply(
             lambda x: any('L858R' in m for m in x) and any('T790M' in m for m in x)
         )
     ]
     
-    l858r_count = len(patient_mutations[patient_mutations['HGVSp_Short'].apply(lambda x: any('L858R' in m for m in x))])
-    t790m_count = len(patient_mutations[patient_mutations['HGVSp_Short'].apply(lambda x: any('T790M' in m for m in x))])
+    l858r_count = len(patient_data[patient_data['HGVSp_Short'].apply(lambda x: any('L858R' in m for m in x))])
+    t790m_count = len(patient_data[patient_data['HGVSp_Short'].apply(lambda x: any('T790M' in m for m in x))])
     combo_count = len(l858r_t790m_cases)
     
     print(f"\n 關鍵組合統計:")
@@ -81,7 +81,7 @@ def analyze_cooccurrence(df_clean):
     # 為了兼容 visualize_results.py，我們也產生舊格式的 patient_analysis.csv
     # 重新建構舊格式的 status
     old_results = []
-    for idx, row in patient_mutations.iterrows():
+    for idx, row in patient_data.iterrows():
         muts = row['HGVSp_Short']
         pid = row['Tumor_Sample_Barcode']
         has_sens = any(m for m in muts if 'L858R' in m or 'Exon 19' in m or 'del' in str(m).lower()) # 簡化判斷
