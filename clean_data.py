@@ -27,12 +27,8 @@ def classify_mutation(row):
         return "L858R"
     if re.search(r'(E746|L747|T751|A750|S752).*del', hgvsp): 
         return "Exon 19 Del"
-    if 'G719' in hgvsp:
-        return "G719X"
-    if 'L861Q' in hgvsp:
-        return "L861Q"
-    if 'S768I' in hgvsp:
-        return "S768I"
+    if 'G719' in hgvsp or 'L861Q' in hgvsp or 'S768I' in hgvsp:
+        return "Uncommon Sensitizing"
 
     # 2. Resistance Mutations
     if 'T790M' in hgvsp:
